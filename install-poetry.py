@@ -53,25 +53,17 @@ def main():
                 """
             )
         )
-    update_profile(poetry_home, poetry_wrapper, home)
 
-
-def update_profile(poetry_home, poetry_wrapper, home):
-    addition = f'\nexport POETRY_HOME="{poetry_home}"\n. {poetry_wrapper}/poetry.env\n'
-
-    with open(f"{home}/.bashrc") as f:
-        content = f.read()
-
-    updated, number_of_subs_made = re.subn(
-        r'\nexport POETRY_HOME=".*"\n\. .*/poetry.env\n', addition, content, 1
-    )
-
-    if number_of_subs_made == 0:
-        with open(f"{home}/.bashrc", "a") as f:
-            f.write(addition)
-    else:
-        with open(f"{home}/.bashrc", "w") as f:
-            f.write(updated)
+    os.makedirs(f"{home}/.bashrc.d", exist_ok=True)
+    with open(f"{home}/.bashrc.d/poetry.env", "w") as f:
+        f.write(
+            textwrap.dedent(
+                f"""\
+                export POETRY_HOME="{poetry_home}"
+                . {poetry_wrapper}/poetry.env
+                """
+            )
+        )
 
 
 if __name__ == "__main__":

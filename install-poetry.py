@@ -47,7 +47,7 @@ def main():
                     if [ "$1" == "shell" ]; then
                         . "$(${POETRY_HOME}/bin/poetry env info -p)/bin/activate";
                     else
-                        ${POETRY_HOME}/bin/poetry ${@};
+                        ${POETRY_HOME}/bin/poetry "${@}";
                     fi
                 }
                 """

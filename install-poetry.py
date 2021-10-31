@@ -45,7 +45,12 @@ def main():
                         return;
                     fi;
                     if [ "$1" == "shell" ]; then
-                        . "$(${POETRY_HOME}/bin/poetry env info -p)/bin/activate";
+                        VIRTUAL_ENV="$(${POETRY_HOME}/bin/poetry env info -p)";
+                        if [ -f "$VIRTUAL_ENV/bin/activate" ] ; then
+                            . "$VIRTUAL_ENV/bin/activate";
+                        else
+                            echo "No virtualenv found, run poetry install";
+                        fi
                     else
                         ${POETRY_HOME}/bin/poetry "${@}";
                     fi

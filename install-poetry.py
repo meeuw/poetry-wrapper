@@ -19,13 +19,14 @@ def main():
     args = parser.parse_args()
 
     version = args.version
+    home = os.path.expanduser("~")
+    poetry_wrapper = f"{home}/.local/share/poetry-wrapper"
+    poetry_home = f"{poetry_wrapper}/{version}"
+
     r = urlopen(
         "https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py"
     )
     env = os.environ.copy()
-    home = os.path.expanduser("~")
-    poetry_wrapper = f"{home}/.local/share/poetry-wrapper"
-    poetry_home = f"{poetry_wrapper}/{version}"
     env["POETRY_HOME"] = poetry_home
     os.makedirs(f"{poetry_wrapper}/{version}", exist_ok=True)
     p = subprocess.Popen(
@@ -34,12 +35,16 @@ def main():
         env=env,
     )
     p.communicate(r.read())
+
     with open(f"{poetry_wrapper}/poetry.env", "w") as f:
         f.write(
             textwrap.dedent(
                 """\
                 poetry ()
                 {
+                    if [ "$(type -t _poetry_home)" == function ] ; then
+                        export POETRY_HOME=$(_poetry_home)
+                    fi
                     if [ -z "${POETRY_HOME}" ]; then
                         echo "POETRY_HOME not set";
                         return;
@@ -64,7 +69,6 @@ def main():
         f.write(
             textwrap.dedent(
                 f"""\
-                export POETRY_HOME="{poetry_home}"
                 . {poetry_wrapper}/poetry.env
                 """
             )

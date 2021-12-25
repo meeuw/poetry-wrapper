@@ -1,4 +1,4 @@
-from urllib.request import urlopen
+from urllib.request import urlopen, urlretrieve
 import subprocess
 import sys
 import tempfile
@@ -36,43 +36,11 @@ def main():
     )
     p.communicate(r.read())
 
-    with open(f"{poetry_wrapper}/poetry.env", "w") as f:
-        f.write(
-            textwrap.dedent(
-                """\
-                poetry ()
-                {
-                    if [ "$(type -t _poetry_home)" == function ] ; then
-                        export POETRY_HOME=$(_poetry_home)
-                    fi
-                    if [ -z "${POETRY_HOME}" ]; then
-                        echo "POETRY_HOME not set";
-                        return;
-                    fi;
-                    if [ "$1" == "shell" ]; then
-                        VIRTUAL_ENV="$(${POETRY_HOME}/bin/poetry env info -p)";
-                        if [ -f "$VIRTUAL_ENV/bin/activate" ] ; then
-                            . "$VIRTUAL_ENV/bin/activate";
-                        else
-                            echo "No virtualenv found, run poetry install";
-                        fi
-                    else
-                        ${POETRY_HOME}/bin/poetry "${@}";
-                    fi
-                }
-                """
-            )
-        )
+    urlretrieve("https://raw.githubusercontent.com/meeuw/poetry-wrapper/master/poetry.env", f"{poetry_wrapper}/poetry.env")
 
     os.makedirs(f"{home}/.bashrc.d", exist_ok=True)
     with open(f"{home}/.bashrc.d/poetry.env", "w") as f:
-        f.write(
-            textwrap.dedent(
-                f"""\
-                . {poetry_wrapper}/poetry.env
-                """
-            )
-        )
+        f.write(". {poetry_wrapper}/poetry.env\n")
 
 
 if __name__ == "__main__":

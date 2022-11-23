@@ -36,12 +36,8 @@ def main():
     )
     p.communicate(r.read())
 
-    urlretrieve("https://raw.githubusercontent.com/meeuw/poetry-wrapper/master/poetry.env", f"{poetry_wrapper}/poetry.env")
-
     os.makedirs(f"{home}/.bashrc.d", exist_ok=True)
-    with open(f"{home}/.bashrc.d/poetry.env", "w") as f:
-        f.write(". {poetry_wrapper}/poetry.env\n")
-
+    urlretrieve("https://raw.githubusercontent.com/meeuw/poetry-wrapper/master/poetry.env", f"{home}/.bashrc.d/poetry.env")
 
 if __name__ == "__main__":
     sys.exit(main())

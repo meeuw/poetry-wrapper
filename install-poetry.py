@@ -24,7 +24,7 @@ def main():
     poetry_home = f"{poetry_wrapper}/{version}"
 
     r = urlopen(
-        "https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py"
+        "https://install.python-poetry.org/"
     )
     env = os.environ.copy()
     env["POETRY_HOME"] = poetry_home
